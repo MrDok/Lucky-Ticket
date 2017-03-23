@@ -28,6 +28,6 @@ public class Validation{
             }
         }
 
-        return true;
+        return oneCounts - zeroCounts == 1;
     }
 }
