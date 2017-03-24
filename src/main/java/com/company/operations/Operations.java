@@ -5,8 +5,7 @@ package com.company.operations;
  */
 public interface Operations{
 
-    Character getOperation();
-    int getId();
     Character getOperationById(int id);
+    Character getOperationByCharId(char id);
     int size();
 }

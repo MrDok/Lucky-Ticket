@@ -8,7 +8,7 @@ import com.company.validation.Validation;
 public class PostfixTemplateGenerator implements Generator{
 
     private static final int MAX_NUMBER_COUNT = 15;
-    public static final char REPLACEMENT_SYMBOL = '$';
+    public static final char REPLACEMENT_OPERATION_SYMBOL = '$';
     private int size;
     private int currentValue;
     private int maxValue;
@@ -37,7 +37,7 @@ public class PostfixTemplateGenerator implements Generator{
             throw new IndexOutOfBoundsException();
         }else{
             currentValue = candidate;
-            return Integer.toBinaryString(currentValue).replace('0', REPLACEMENT_SYMBOL);
+            return Integer.toBinaryString(currentValue);//.replace('0', REPLACEMENT_OPERATION_SYMBOL);
         }
     }
 
@@ -87,8 +87,6 @@ public class PostfixTemplateGenerator implements Generator{
     private int calculateMaxValue(int size){
         return ((int)(Math.pow(2, size)) - 1) << size - 1;
     }
-
-
 
     public static void main(String[] args){
         PostfixTemplateGenerator generator = new PostfixTemplateGenerator(3);
