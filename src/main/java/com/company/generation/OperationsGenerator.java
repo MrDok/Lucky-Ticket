@@ -52,6 +52,11 @@ public class OperationsGenerator implements Generator{
         return "%0" + size + "d";
     }
 
+    @Override
+    public void startFromBegin(){
+        currentValue = 0;
+    }
+
     public static void main(String[] args){
         OperationsGenerator generator = new OperationsGenerator(2, new SimpleOperations());
         while (generator.hasNext()){

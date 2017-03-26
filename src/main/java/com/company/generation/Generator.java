@@ -8,4 +8,6 @@ public interface Generator{
     String next();
 
     boolean hasNext();
+
+    void startFromBegin();
 }

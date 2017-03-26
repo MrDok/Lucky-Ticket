@@ -62,7 +62,7 @@ public class PostfixTemplateGenerator implements Generator{
      * Reinitialization of generator
      */
     public void startFromBegin(){
-       currentValue = calculateMaxValue(this.size);
+       currentValue = calculateStartValue(this.size);
     }
 
     /**
