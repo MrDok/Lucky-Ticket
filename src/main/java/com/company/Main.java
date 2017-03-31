@@ -3,8 +3,9 @@ package com.company;
 public class Main {
 
     public static void main(String[] args) {
-        StringBuilder builder = new StringBuilder("asdfg");
+        Number i = 1;
+        Number j = 3;
 
-        System.out.println(builder.replace(3, 4, "qqqqq"));
+        System.out.println();
     }
 }

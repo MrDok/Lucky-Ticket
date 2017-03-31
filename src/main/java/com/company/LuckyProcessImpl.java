@@ -3,7 +3,9 @@ package com.company;
 import com.company.generation.Generator;
 import com.company.generation.OperationsGenerator;
 import com.company.generation.PostfixTemplateGenerator;
+import com.company.operations.Calculator;
 import com.company.operations.Operations;
+import com.company.operations.SimpleCalculator;
 import com.company.operations.SimpleOperations;
 
 import java.util.List;
@@ -26,11 +28,21 @@ public class LuckyProcessImpl implements LuckyProcessing{
 
     @Override
     public double calculate(Object[] expression){
-        Stack<Object> stack;
+        Stack<Number> stack = new Stack<>();
+
+        Calculator calculator = new SimpleCalculator();
 
         for (Object obj : expression){
+            if (obj instanceof Number){
+                stack.add((Number) obj);
+            }else if (obj instanceof Character){
+                Number second = stack.pop();
+                Number first = stack.pop();
+
+                stack.add(calculator.calculate(first, second, (Character) obj));
+            }
         }
-        return 0;
+        return (float) stack.pop();
     }
 
     @Override
@@ -42,7 +54,10 @@ public class LuckyProcessImpl implements LuckyProcessing{
             String template = templateGenerator.next();
             operationsGenerator.startFromBegin();
             while (operationsGenerator.hasNext()){
-                System.out.println(template + " - " + replaceSymbols(template, numbers, operationsGenerator.next()));
+                Object[] expression = replaceSymbols(template, numbers, operationsGenerator.next());
+                if (calculate(expression) == 100f){
+                    System.out.println(template + " - " + toStringArray(expression));
+                }
             }
         }
         return null;
@@ -58,15 +73,25 @@ public class LuckyProcessImpl implements LuckyProcessing{
             if (input.charAt(i) == '0'){
                 expression[i] = operationCombination.charAt(operationIndex++);
             }else if (input.charAt(i) == '1'){
-                expression[i] = Integer.parseInt(numbers[numberIndex--]);
+                expression[i] = Float.parseFloat(numbers[numberIndex--]);
             }
         }
 
         return expression;
     }
 
+    private String toStringArray(Object[] objects){
+        StringBuilder builder = new StringBuilder();
+
+        for (Object object : objects){
+            builder.append(object.toString());
+        }
+
+        return builder.toString();
+    }
+
     public static void main(String[] args){
-        LuckyProcessing luckyProcessing = new LuckyProcessImpl(new String[]{"1", "2", "3", "7"}, new SimpleOperations());
+        LuckyProcessing luckyProcessing = new LuckyProcessImpl(new String[]{"20", "5", "1", "1"}, new SimpleOperations());
 
         luckyProcessing.generateDecision();
     }
