@@ -54,7 +54,11 @@ public class LuckyProcessImpl implements LuckyProcessing{
             String template = templateGenerator.next();
             operationsGenerator.startFromBegin();
             while (operationsGenerator.hasNext()){
-                Object[] expression = replaceSymbols(template, numbers, operationsGenerator.next());
+                String operations = operationsGenerator.next();
+                if (operations.equals("//--*")){
+                    System.out.println();
+                }
+                Object[] expression = replaceSymbols(template, numbers, operations);
                 if (calculate(expression) == 100f){
                     System.out.println(template + " - " + toStringArray(expression));
                 }
@@ -64,16 +68,16 @@ public class LuckyProcessImpl implements LuckyProcessing{
     }
 
     private Object[] replaceSymbols(String input, String[] numbers, String operationCombination){
-        int numberIndex = numbers.length - 1;
+        int numberIndex = 0;
         int operationIndex = 0;
 
         Object[] expression = new Object[input.length()];
 
-        for (int i = input.length() - 1; i >= 0 ; i--){
+        for (int i = 0; i < input.length() ; i++){
             if (input.charAt(i) == '0'){
                 expression[i] = operationCombination.charAt(operationIndex++);
             }else if (input.charAt(i) == '1'){
-                expression[i] = Float.parseFloat(numbers[numberIndex--]);
+                expression[i] = Float.parseFloat(numbers[numberIndex++]);
             }
         }
 
@@ -84,14 +88,18 @@ public class LuckyProcessImpl implements LuckyProcessing{
         StringBuilder builder = new StringBuilder();
 
         for (Object object : objects){
-            builder.append(object.toString());
+            if (object instanceof Number){
+                builder.append(String.format("%1$.0f", object) + " ");
+            }else{
+                builder.append(object.toString() + " ");
+            }
         }
 
         return builder.toString();
     }
 
     public static void main(String[] args){
-        LuckyProcessing luckyProcessing = new LuckyProcessImpl(new String[]{"20", "5", "1", "1"}, new SimpleOperations());
+        LuckyProcessing luckyProcessing = new LuckyProcessImpl(new String[]{"6", "3", "9", "8", "7", "3"}, new SimpleOperations());
 
         luckyProcessing.generateDecision();
     }
