@@ -8,6 +8,7 @@ import com.company.operations.Operations;
 import com.company.operations.SimpleCalculator;
 import com.company.operations.SimpleOperations;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
@@ -16,14 +17,14 @@ import java.util.Stack;
  */
 public class LuckyProcessImpl implements LuckyProcessing{
 
-    private List<String> decisions;
-
     private Operations operations;
     private String[] numbers;
+    private Float expectedResult;
 
-    public LuckyProcessImpl(String[] numbers, Operations operations){
+    public LuckyProcessImpl(String[] numbers, Operations operations, Float expectedResult){
         this.numbers = numbers;
         this.operations = operations;
+        this.expectedResult = expectedResult;
     }
 
     @Override
@@ -46,25 +47,42 @@ public class LuckyProcessImpl implements LuckyProcessing{
     }
 
     @Override
-    public String generateDecision(){
+    public String infixExpressionView(Object[] expression){
+        Stack<String> stack = new Stack<>();
+
+        for (Object obj : expression){
+            if (obj instanceof Number){
+                stack.push(String.valueOf(obj));
+            }else if (obj instanceof Character){
+                String second = stack.pop();
+                String first = stack.pop();
+
+                stack.push("(" + first + obj + second + ")");
+            }
+        }
+
+        return stack.pop();
+    }
+
+    @Override
+    public List<String> generateDecisions(){
         Generator templateGenerator = new PostfixTemplateGenerator(numbers.length);
-        Generator operationsGenerator = new OperationsGenerator(numbers.length - 1, new SimpleOperations());
+        Generator operationsGenerator = new OperationsGenerator(numbers.length - 1, operations);
+        List<String> decisions = new ArrayList<>();
 
         while (templateGenerator.hasNext()){
             String template = templateGenerator.next();
             operationsGenerator.startFromBegin();
             while (operationsGenerator.hasNext()){
                 String operations = operationsGenerator.next();
-                if (operations.equals("//--*")){
-                    System.out.println();
-                }
+
                 Object[] expression = replaceSymbols(template, numbers, operations);
-                if (calculate(expression) == 100f){
-                    System.out.println(template + " - " + toStringArray(expression));
+                if (calculate(expression) == expectedResult){
+                    decisions.add(infixExpressionView(expression));
                 }
             }
         }
-        return null;
+        return decisions;
     }
 
     private Object[] replaceSymbols(String input, String[] numbers, String operationCombination){
@@ -99,8 +117,13 @@ public class LuckyProcessImpl implements LuckyProcessing{
     }
 
     public static void main(String[] args){
-        LuckyProcessing luckyProcessing = new LuckyProcessImpl(new String[]{"6", "3", "9", "8", "7", "3"}, new SimpleOperations());
+        LuckyProcessing luckyProcessing = new LuckyProcessImpl(new String[]{"1", "3", "3", "10", "10", "0"}, new SimpleOperations(), 100f);
 
-        luckyProcessing.generateDecision();
+        List<String> decisions = luckyProcessing.generateDecisions();
+
+        System.out.println("Count of decisions: " + decisions.size());
+        for (String decision : decisions){
+            System.out.println(decision);
+        }
     }
 }

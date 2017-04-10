@@ -1,10 +1,14 @@
 package com.company;
 
+import java.util.List;
+
 /**
- * Created by user on 07.03.2017.
+ * @author adokuchaev on 07.03.2017.
  */
 public interface LuckyProcessing{
      double calculate(Object[] expression);
 
-     String generateDecision();
+     List<String> generateDecisions();
+
+     String infixExpressionView(Object[] expression);
 }
